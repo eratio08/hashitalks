@@ -259,14 +259,124 @@ All in the error budget.
 ## Writing Your First Waypoint Deploy Plugin
 3:35 pm → 30 min, Bram Vogelaar, Fokke Dekker; Waypoint 
 
+Work at seaplane.io
+
+Waypoint: modern workflow to release across platforms.
+Can be extended with plugins.
+
+Seaplane - a multi-cloud platform with a global network.
+Abstract away all the difficulties of a global deployment.
+
+Use case a simple web app in python.
+
+Waypoint has 3 Steps: Build to build the container and push it, Deploy the app, Release.
+
+There is a plugin template that is provided on github.
+
+3 Maturity levels of plugins.
+1 - Local execution form HCL File
+2 - Local execution from plugin framework
+3 - Run on the platform in the waypoint framework
+
+Step 1 - ??? (did not get was this was about).
+Step 2 (still hard to get what this is all about).
+The whole topic is hard to understand without knowing what waypoint does.
+
+So they implemented a plugin so you can use waypoint to deploy to seaplane.
+The details are not too interesting.
+
+Waypoint has a nice UI.
+
+They show a demo.
+`waypoint init` and `waypoint up`.
+The app will be deployed to seaplane.
+`waypoint destroy` to remove it again.
+
+Complex deployments to seaplane are not yet supported.
+
+
 ## Scale Your Cloud Network to Infinity and Beyond
 4:05 pm → 30 min, Du'An Lightfoot; Terraform 
 
-## Designing for Equity
-4:35 pm → 30 min, Jasmine Whaley; Community Culture Other 
+AWS.
+
+What's a VPC: Virtual network in the cloud.
+Mimics a traditional network.
+How many VPC are needed?
+Related to accounts and environments.
+How to go from 1 VPC to multi VPC?
+Larger VPC with large accounts vs smaller vpc and smaller accounts.
+Less accounts and networks to manage.
+Tighter controls within the account or vps.
+On smaller accounts more accounts to setup and more infrastructure.
+Big accounts make billing complex and blat radius is bigger.
+Smaller accounts are billed easily and have a way smaller blast radius.
+
+Interconnecting VPC with peering.
+Point to point connection, with acceptor and requester.
+Routing needs to be defined on both VPC.
+Transitive routing is not supported.
+VPC can not have overlapping IPs.
+Can not use jumbo frame and multiple paring between the same vpcs.
+
+Transient Gateway: regional virtual router for traffic flowing between vpc.
+Hub and spoke style.
+Before transitive gateway you would need a full mesh n:n peerings/
+The Transit Gateway can be used to reduce to a central router.
+
+Cloud9 a cloud base IDE is used for the demo.
+The demo shows some multi vpc setup that is connected via a transient gateway.
+There is a VPC modules by AWS with best practices.
+https://registry.terraform.io/browse/modules?provider=aws
+
+## Self-Service IOC: People, process, product
+Juan Herreros Elorza, Banking Circles
+
+Issue: We need an environment, this one guy know how, there is a script that does it.
+Instructions where hand written notes, great.
+DevOps: Devops is the unioin of peoples, process and product.
+The original process:
+Peoples where waiting too much, devops was doing to much, communication was too late.
+Process - ops team was the bottleneck. 
+Different solutions to the same problem.
+Environment drifts.
+
+Add devops to the teams.
+High cognitive load for devops.
+More points of communications.
+
+Goal: move from sequential process to a parallel process.
+Book - Team Topologies.
+Mentions Platform team.
+
+Shared re-usable self-service building blocks.
+Blocks are easy to use, standard, compliant.
+DevOps (platform) team provides, maintains and supports blocks.
+Dev use the blocks.
+
+Terraform modules & Azure DevOps pipeline templates.
+
+The project team take modules from the shelf and runs it in a pipeline (instance of a pipeline template).
+
+Use `terratest` to test the blocks and instances of the blocks.
+
+Projects have a governance model.
+Owner/maintainer, contributor and user.
+
+> Do the same things in the same way.
+
+They use https://www.checkov.io for static code analysis.
+
+They use a terraform module repository to make it version safe.
+They generate documentation with `terraform-docs` and `Mkdocs`.
+
 
 ## Break
 5:05 pm → 10 min
+
+
+## Designing for Equity
+4:35 pm → 30 min, Jasmine Whaley; Community Culture Other 
 
 ## Terraform: Don't Reinvent the Modules
 5:15 pm → 30 min, Lays Rodrigues; Terraform 
