@@ -378,53 +378,571 @@ They generate documentation with `terraform-docs` and `Mkdocs`.
 ## Designing for Equity
 4:35 pm → 30 min, Jasmine Whaley; Community Culture Other 
 
+was skipped
+
+
 ## Terraform: Don't Reinvent the Modules
 5:15 pm → 30 min, Lays Rodrigues; Terraform 
+
+Works at Pagar.me.
+
+Also advocated for using official AWS modules.
+Benefits are they are open source and implemented by aws with best practices.
+The modules are nicely documented and have examples.
+Wide spread usage.
+
 
 ## Advanced Terraform Techniques
 5:45 pm → 30 min, John McDonough; Terraform 
 
+Works at fortinet.
+
+Its about: code reuse, data=driven code, for_each > count, implicit dependencies.
+
+code reuse, he uses git submodules.
+A submodule is a repository referenced by the current repo.
+In github submodules are shown with the referenced commit hash.
+Kepp generic resource code in a git repository.
+Resource module is a distinct object.
+
+`git submodule add <remote_url> <destination>`.
+`git commit -m "added submodule"`
+`git push`
+
+To update the submodule:
+...
+
+How does a generic resource look like.
+Variabalize every props and reuse the name of the original prop.
+
+Have a module to use the generic resource and use for_each to loop over locals to create actual resources.
+
+Locals + Generic Resources = data-driven code.
+Only change locals to change the infrastructure.
+Easy to reuse in different environments.
+
+He stresses the might of the `for_each` to create NxM loops.
+Use `setproduct` to create a list of NxM and loop over with `for_each`.
+
+`count` use for conditionals, and for sized.
+Count uses indices for reference but for_each uses key name. 
+Don't use count if you can use for_each.
+
+You can use for_each for conditional with the `if` condition.
+Or use the ternary to loop over empty loop in the false case.
+Use for_each with dynamic blocks.
+
+Implicit dependencies.
+This enforces ordering during plan.
+Easier apply and destroy.
+
+Search Github if we can find the referenced examples.
+github.com/movingalog
+
+
 ## Building Scalable Enterprise Secrets Management with GitHub OIDC and HashiCorp Vault
 6:15 pm → 30 min, Ari Kalfus; Vault 
+
+Is security at digital ocean.
+
+Manage secrets is hard.
+In the use case of github actions this is a nice approach.
+Secret Zero problem.
+Where do you store the secret to the secret store.
+What to do if the env is compromised.
+Do not use github secretes.
+
+OIDC solves the management complexity.
+
+Github Secretes issues.
+No lifecycle or rotation.
+Granularity is coarse.
+Auditing seems hard/missing.
+What if one workflow is compromised.
+
+OIDC is ephemeral to each run.
+Lot more options than per-repo.
+Great audibility.
+Enables very short TTL/otp.
+
+Vault can bind a role to any github oidc claim.
+So a very fine granular is possible.
+
+How to manage these new create roles at scale?
+Reduce developer friction.
+Provide a paved path for developers.
+Secrets access should not be a hassle.
+Solve developers concerns.
+Have actions to set global default in github workflows.
+Do not expose OIDC claim construction to the developers.
+Possibly generate workflow files.
+
+Try not to use the actor field for auditing.
+Rather use user_claim.
+The vault audit logs now show actionable information.
+
+They published the actions in their repo with a DIY course.
+There is also an article in the DO Blog.
+
 
 ## Running Cilium with Nomad
 6:45 pm → 30 min, Dan Norris; Consul Nomad 
 
+CNI Container Netwwork Interface: spec and libraries for plugins that configure networking for linux containers.
+Allows for fine grained control over how tasks are networked.
+They use CNI with Firecracker for Nomad.
+
+Was is cilium.
+CNI plugin to use eBPF.
+eBPF is like a virtual machine in the kernel.
+You can run a hook to every packet to a machine.
+This is was cilium does.
+Hubble is part of cilium and allows to inspect every egress and ingress traffic.
+Cilium allows for network policies at L3,L4 and L7.
+Can restrict service to service accessibility.
+Can limit on CIDR or DNS and more.
+Effectively a programmable firewall for containers.
+Can use wireguard to encryption, so no TLS needed.
+
+Cilium only works with K8s.
+Most bookkeeping of cilium is done by a K8s operator.
+So Nomad is not supported directly.
+Nomad agents only finger prints during startup.
+So Cilium needs to running before Nomad starts.
+
+Cilium needs to run on every node.
+They run cilium as docker containers.
+The docker bridge needs a different cidr for this to work.
+Endure all base CNI plugin are installed and provide a config file for cilium.
+Insure to run cilium everywhere.
+They use systemd to archive this.
+Consul is required here as well and cilium has to use it.
+
+They've written `netreap` to clean up ip allocations and sync policies.
+
+A single cilium cluster manages single subnet across all node in the cluster.
+netreap check that no ip spaces are exhausted.
+It also removes stale agent from the cilium cluster.
+
+Cilium uses CRDs to network policies in K8s.
+In Nomad netreap can handle this.
+
+Demo: shows network policies restrictions.
+Egress policies are required because it's restrict all by default.
+
+
 ## Multi-Cloud WAN Federation with Consul and Kubernetes
 7:15 pm → 30 min, Jacob Mammoliti; Consul 
+
+What does it mean to be multi-cloud?
+To use the service of at least 2 cloud providers.
+The benefits are to use the best of each cloud.
+
+Consul and Service Discovery.
+To avoid management of ip or local dns names use consul.
+Consul connect can be used for service to service connection (service mesh).
+It uses envoy proxy cross clouds.
+Manage traffic, app security also adds observability.
+
+Consul was WAN federation to join networks in different clouds. 
+It supports multi cloud fail-over.
+
+The Demo shows cross cloud access with GCP and Azure.
+
 
 ## Multi-Cloud Image Pipeline
 7:45 pm → 30 min, Marcelo Zambrana; Packer 
 
+Multi Cloud image factories.
+This images can be crafted with Packer.
+As there is no standardization so packer can help here.
+You can use github workflows and HCP to archive this.
+
+Packer plugins help to support multi cloud images.
+
+## Go build plugin for Vagrant
+By Sphia Castellarin, Video from 2022 
+
+Shows how to write go plugin for Vagrant.
+Not so interesting...
+
+
 ## Vault and Boundary - Managing Secrets at Home
 8:15 pm → 30 min, Michael Greenlaw; Boundary Terraform Vault 
+
+From MonoByte.
+
+HashiPass, a simple password management system.
+For at-home use.
+It should be cheap, simple, scalable secure and have zero trust.
+
+Initial design. VPC, EKS, ALB, Bastion, Vault.
+Bastion for SSH access.
+Vault running in EKS.
+(Example uses the AWS VPC/EKS module).
+
+The whole setup is not simple as wished.
+
+Now use Auth0 and boundary.
+Ideally support MFA.
+As boundary is managed via terraform.
+
+It bit over powered for an at-home setup.
+
+
+## Bootstraping Terraform Secrets with the 1Password CLI
+Julian Morgan, 1 Password
+
+The problem infrastructure requires credentials for management.
+Envfile or tf var files are a risk.
+
+Use 1Password cli to use if required.
+Replace passwords in env files with a reference to the secret in 1 password.
+Any changes to credentials will be synced to the team and version via source contrail.
+
+
+`op-run --env-files tf apply` to replace reference on apply.
+
 
 ## Hidden Hazards: Unique Burnout Risks in Tech
 8:45 pm → 30 min, Allessandria Polizzi; Community Culture Other 
 
+They advocate for burnout resilience and related topics.
+
+Covid, Was and other stuff have a negative impact.
+2 out of 5 tech worker has experienced symptoms of burn out. 
+42% tech workers anticipating leaving work due to burn out.
+62% are concerned about the future.
+
+Causes for burn out: Workload, absents of Control, In-Security, not aligned Values, not being Valued, having role clarity Clarity.
+
+These are drivers but the actual cause is very personal.
+
+Symptoms: Exhaustion, Cynicism, Cognition.
+Cognition - things that we where good at seem to get more complicated.
+
+5 Hazardous for tech:
+* Exhaustion - 56% have experienced it.
+Think about it: How often do you struggle with letting go?
+Change Curve.
+How people experience changes.
+Shock Denial Frustration Depression Experimentation Decision Integration.
+There can be change fatigue.
+To many changes to not recover from all.
+Signs: Questioning Value, Apathy (less emotional investment), Info Hoarding (I don't want to share information), Cynicism, Decision Making (struggling to make a rescission).
+* Constant Threats, Cyber attacks can cause PTSD.
+* People make things messy.
+* Impostor Syndrome.
+
+What can you do?
+Building courage: 
+* Connect 
+* Relate - understanding, personal, purposeful connections
+* Collaborate - give / take, strengths, balanced voices, create history
+* Support - empathy, solidarity, appreciation, sharing, assisting 
+
+
 ## Break
 9:15 pm → 10 min
+
 
 ## Enhancing Platform Teams Workflow with Infrastructure as Code
 9:25 pm → 30 min, Sivamuthu Kumar; Terraform 
 
+Platform Engineering: prative of building & maintaining the infrastructure, tools and processes to support an organization's technology platform.
+Focus on providing a seamless and efficient DX that enables teams to focus on delivering business value.
+
+App Dev teams base on Platform Team, which base on the SRE Team.
+
+Platform Team provide reusable modules, pipelines and tools.
+Monitor the infrastructure for performance & issues.
+Updating Infrastructure.
+
+Automating Self-Serv Platform Request with Github IssueOps.
+Infrastructure changes are automated by opening issues in github.
+Uses github action to listen to github events.
+
+Demo.
+It uses Issue Forms.
+Creating a new Issue will show issue templates base on what you need.
+The issue forms make it very easy to get all required information.
+He request the provisions of an EKS cluster with an issue.
+The planner will check it.
+A platform team member needs to approve and then the bot will apply the changes.
+
+
 ## How to Nomadify Your Kubernetes Manifests
 9:55 pm → 30 min, Adriana Villela; Nomad 
+
+Terminologies:
+Container Runtime = Task Drive.
+Pod = Task Group.
+Container = Task.
+Manifest = Jobspec.
+K8s deployment = Nomad job.
+Service = Service.
+
+Conversion Process.
+K8s Manigest to JobSpec.
+Take a JobSpec Template and fill ports, services and tasks definitions.
+
+The example an OTEL demo app.
+Grab the Manifest from the OTEL repo.
+Deployment Definition and the Service Definition.
+JobSpec is crafted from this.
+Set service nama.
+Set network spec to expose ports.
+Set the service definition.
+One Service per port, one http, one grpc.
+Service can be auto register to consul or nomad.
+Expose the service with traefik by tagging the service.
+Define health checks.
+
+Now define the task.
+This task uses the docker driver.
+Image and ports are declared.
+
+(stopped following at this point, as it very detailed about how to write the files)
+
 
 ## Autoscaling Workers for Boundary
 10:25 pm → 30 min, Ned Bellavance; Boundary 
 
+HasiCorp Ambassadors. NedInTheCloud.com
+
+The history of boundary.
+Getting rid of bastion hosts.
+There was a reference architecture for AWS.
+Boundary is made up of the control plane that uses an postgres to store session.
+Worker nodes actually route the traffic.
+He made a reference architecture for azure.
+Like closely the same as the aws one.
+The HCP product make it way simpler because the control plane is managed.
+You might be responsible for the workers if you want.
+
+HCP managed setup: Control Plane and managed workers.
+Managed workers work for public endpoints.
+Self-managed workers would be used for private resource in a private subnet.
+Boundary Cost: Sessions, Data transfer fee, self-managed workers (cloud costs).
+
+Reduce the worker cost by dynamically scale them.
+
+Scaling Considerations: metrics - network or cpu?
+Availability, recommended 3 worker for HA.
+Have a scaling schedule not base on metrics solely.
+Scale to zero?
+Automatic Updates.
+Scale up for upgrade, like a rolling update.
+Because version have to match with the control plane.
+
+Registration: Worker registers to the Control plane.
+In OSS PKI and KMS.
+In HCP only PKI.
+Controller-led & Worker-led.
+In Autosscaling case Worker-led.
+1. Self managed worker will talk to the control plane, auth request
+1. auth request token responded to the worker
+1. a user principal take the request token, auth them self to the control plane 
+1. run a command to the worker registration
+1. Control plane hands credentials to the worker
+
+Principal auth with password or OIDC.
+OIDC requires interaction.
+Automated worker registration will require password auth.
+The worker will need quite some information to perform a self registration.
+User Azure key store to provide this information to the nodes.
+
+Demo: he shows `boundary.tmpl` that holds the worker script running at start up.
+HCP uses a different bin as the OSS version.
+He uses some service account to access the key store.
+He generates the `worker.hcl`.
+And generates the systemd file to use it as a service..
+Start the systemd service.
+
+github.com/ned1313
+
+
 ## Secure Developer Workflows with Vault & Github Actions
 10:55 pm → 30 min, Kartik Lunkad; Vault 
+
+Example: Netflix.
+Vision to create Studio in the cloud.
+Variety of the app teams had to many security things to do.
+Strong authentication is our highest leverage control.
+Killed the checklist approach.
+Made trivial to integrate authN.
+
+Security starts at the local dev env.
+DX is the hack for adopting of secure practice.
+Start with good enough security pattern.
+
+Secure Secret Access Developer Workflow.
+1. static secrets in your .net app
+use token base auth and retrieve secrets from source code.
+Secrets are generate into the code.
+Less secure.
+He Demos it.
+
+1. dynamic secrets in a go application.
+Dynamic access during runtime.
+More secure, harder to use because they have a TTL.
+
+1. manage secrets in the github actions workflows.
+Uses token based auth, oidc would be more secure.
 
 ## Why You Should Use Vault as Your Consul Certificate Authority
 11:25 pm → 30 min, Thomas Kula; Consul 
 
+CA usage in Consul.
+Consul Service Mesh using the CA.
+mTLS (mutual TLS) at the core of Consul.
+Each service has a cert to identify to each other.
+Services access aka intentions are controlled with certs.
+
+Who are you?
+Are you allowed in?
+All based on identify embedded in TLS certs.
+So certs are very important. 
+What do we need to protect.
+We do not need to are about certs, at all!
+A cert is only an identity assertion.
+Certs are by definition a public document.
+But we do care about the private key related to the cert, that signed the cert.
+The private key is the proof of identity.
+How can we trust a cert?
+Certs are signed by higher up certificates, up to a CA. 
+The root CA is trusted so we trust any derived cert.
+
+What to we need to do to protect those private keys.
+Protection is quite easy.
+A private key is generate locally and it asked a ca to sign a cert.
+The private key is only in memory.
+It get harder for higher up CAs.
+With the root ca private key we can sign anything.
+There are many standard on how to protect CAs private keys.
+
+How does Consul do it?
+It's stored/protected with the RAFT protocol.
+(RAFT is a distributed consensus algorithm).
+Raft.db file is stored on a consul node. 
+Checking the file we find a private key.
+Generate the public key for the private key and compare it to the cert.
+It the actual root CAs private key.
+Consul mesh is an identify based networking tool.
+
+Use Vault CA to secure the Consul CAs private key.
+So no local storage of the CAs private key anymore.
+All signing is handed off to Vault.
+Vault encrypts every persistent storage used at a backend.
+
+Vault will never hand out private keys.
+There is a special endpoint to get this but it has to be configured with a high privileged token.
+
+Try to access the token when vault is configured to save on disk. 
+But vault will encrypt it, so raw disk access will not expose the key.
+
+Read about PCI.
+
+
 ## Fast-track Your Kubernetes Journey with EKS BluePrints for Terraform and Waypoint
 11:55 pm → 30 min, Juan Peredo; Terraform Waypoint 
+
+Works at AWS.
+
+Example: Joyce want to optimize her teams productivity with k8s.
+Her company uses EKS.
+Her problem is that k8s is complicated and has a lot of resources.
+Security and Observeability has to be setup.
+CNCF list 100+ projects which makes it not easy to apply it correctly.
+
+How to solve
+* cluster management: EKS Blueprints for Terraform.
+* application management: Waypoint
+
+The EKS blueprints helps to setup a well architected Cluster.
+Integrated with ArgoCD.
+The blueprints are build with terraform and helm.
+https://aws-ia.github.io/terraform-aws-eks-blueprints/v4.24.0/
+
+The Teams concept is interesting.
+Platform team with admin access.
+Application teams.
+Each team in it's own namespace.
+With own permissions.
+Each team has a quota.
+The quota is limiting the name space resources.
+Installing addons, e.g. istio or the basic cni addons.
+Observability addons e.g. fluentD.
+Nice argo CD integration ❤️.
+
+Waypoint to abstract building & deployment.
+It's like docker compose up on steroids.
+Can standardize how deployments are done in the organization.
+Waypoint uses HCL declarative syntax.
+Can deploy not only to K8s, but also ECS or lambda.
+Powerful ui to check state.
+How is the process to deploy to EKS.
+1. setup the cluster
+1. Create the `waypoint.hcl`
+1. install & init the waypoint server in the cluster.
+1. Run `waypoint up`
+
+Nice abstraction that we could use for preview app.
+
 
 ## Open Policy Agent in Terraform Cloud
 12:25 am → 30 min, Peter ONeill; Terraform 
 
+OPA is a policy engine.
+Externalize authority.
+The service will ask OPA and OPA will compare the query to the policies that are defined.
+Styra DAS is a control plane for OPA.
+
+The creation of tf resources can also be restricted.
+
+Demo: was really confusing and did not get what the goal was.
+
+
 ## Scaling HashiCorp's Writing Culture with Internal Tooling
 12:55 am → 30 min, Anubhav Mishra, Josh Freda; Community Culture Other 
+
+Over 2k employees and mostly remote.
+works.hashicorp.com
+Focus on the writing culture.
+
+* Problem Requirements Document PRD: Defining the problem
+* Request for Comment RFC: Proposing solutions.
+
+Ideation -> PRD -> Request Review Approval -> RFC -> Request Review -> Approval -> Implement -> Release
+
+Very manual process up until now.
+Challenges
+* scalling company from 100 to 2000 people
+* Volume of documents
+* consistency with writing process
+* sharing & discovery
+* on boarding
+
+The switch to hermes. 
+https://github.com/hashicorp-forge/hermes
+
+Demo of Hermes.
+Authenticate using google.
+Nice pun in his docs, rewrite every thins in rust :D Rewrite vagrant in bash :D.
+But interesting process.
+
+The architecture:
+A single go binary.
+A server and a indexer.
+Algolia is powering the search.
+
+Challenges: unstructured data. 
+Document are unstructured despite using templates.
+Editing google docs with api is hard.
+All is just a blob of json and indices are changing all the time.
+Supporting the existing workflow and the new workflows.
+
+There are published templates for the two document types.
+
+https://docs.google.com/document/d/1Oz_7FhaWxdFUDEzKCC5Cy58t57C4znmC_Qr80BORy1U/edit
+https://docs.google.com/document/d/1oS4q6IPDr3aMSTTk9UDdOnEcFwVWW9kT8ePCNqcg1P4/edit
