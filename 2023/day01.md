@@ -1,4 +1,3 @@
-# Day 1
 
 ## Opening remarks
 1:00 pm → 5 min
@@ -649,7 +648,7 @@ Building courage:
 ## Enhancing Platform Teams Workflow with Infrastructure as Code
 9:25 pm → 30 min, Sivamuthu Kumar; Terraform 
 
-Platform Engineering: prative of building & maintaining the infrastructure, tools and processes to support an organization's technology platform.
+Platform Engineering: practice of building & maintaining the infrastructure, tools and processes to support an organization's technology platform.
 Focus on providing a seamless and efficient DX that enables teams to focus on delivering business value.
 
 App Dev teams base on Platform Team, which base on the SRE Team.

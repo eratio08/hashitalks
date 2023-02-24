@@ -171,7 +171,6 @@ Skipped.
 
 Skipped.
 
-
 ## Behavior Driven Development Helps Shift Security Left
 5:05 am → 30 min, Josh Armitage; Terraform 
 
@@ -240,33 +239,161 @@ Books:
 ## Validate IAM Policy Using Terraform Run Tasks
 5:45 am → 30 min, Welly Siauw; Terraform 
 
+Missed the start as I was on my way to the train.
+
+There is a lambda function is used to check the validity of the IAM policy.
+AWS IAM Access Analyzer is utilized.
+Outcome of the check is called back to the pending terraform cloud task.
+github/wellsiau-aws
+
 
 ## Everything You Need to Know About *CDK - The Internals: From CDKTF to CDK8s
 6:15 am → 30 min, Liav Yona; Terraform 
+
+Sadly nothing new here. 
 
 
 ## Packer and Terraform to Build a Nomad Cluster in vSphere
 6:45 am → 30 min, Sam Gabrail; Nomad Packer Terraform 
 
+Workflow
+* Run Packer locally, will create a template in vSphere
+* Upon push run terrafrom in gitlab
+* TF will create vms
+* gitlab will run ansiblea (using ngrok)
+* ansible will install nomad in the vms
+
+He demos a zero downtime update ob consul and nomad.
+
 
 ## Securing Vault Agent in an Existing Windows Environment
 7:15 am → 30 min, Alain Chiasson; Vault 
+
+Does not seem to be too interesting.
+
+PKI chain using active directory certificate service.
+CSR and Proof of Possession.
+
+Interesting approach but very boring presentation.
+Vault agent is the magic component here.
 
 
 ## Consul Dataplane on Kubernetes
 7:45 am → 30 min, Norbert Gruszka; Consul 
 
+Love story of service_andrew & service_barbara.
+They are deployed in a private network communication is easy.
+Andrew move into another network. 
+The other network has the same address space and there are firewall, connection is hard to establish.
+
+How to help barbara to connect to andrew?
+Can we use a NAT?
+Wait what?
+Consul is a service mesh solution.
+Automated service discovery and automated networking.
+mTLS and Zero trust solution.
+Allows to connect resources deployed in different clusters.
+
+Consul Agent, a long running daemon on each node of the cluster.
+Each agent is a client or a server.
+Can run as a DNS or HTTP interface.
+
+2 Private networks and NAT gateway.
+Subnet as a K8s.
+Consul data plane deployment.
+Side car for each pod, the data plane.
+The NAT is not required.
+... how the peering works here is not clear to me.
+github.com/hashicorp/consul-k8s
+
 
 ## How to Deploy Your HashiCorp Stack with Ansible in Under 15 Minutes
 8:15 am → 30 min, Chris van Meer; Consul Nomad Vault 
+
+As we run K8s this was not too interesting for me.
 
 
 ## Building an Agnostic Security Solution with HashiCorp Vault
 8:45 am → 30 min, Hillol Habib Un Nabi; Terraform Vault 
 
+How to manage secrets agnostic.
+Agnostics means in this context that it's not specific to a special cloud provider.
+Becomes more relevant in case of multi-cloud setups.
+
+Did not follow anymore at some point.
+Need to re-watch.
 
 ## When You're in Command of the Incident
 9:15 am → 30 min, Martin Smith; Culture Other 
+
+What is incident command (ICS)?
+Fire system in the 70s.
+To unify incident management and have a clear chain of command.
+Roles
+* Incident Commander
+* Public Information Officer
+* Liaison Officer 
+* Safety Officer
+* Operations, Planning, Administration, Logistics
+
+DR scenario should be exercised to perform well in case of an incident.
+
+What happens in general?
+* What's in a plan
+* What are we doing?
+* Who is responsible for doing it?
+* How are we going to communicate?
+* How do we handle thins that happen?
+
+OODA: observe -> orient -> decide -> act -> observe -> ...
+
+The commander is not participating on the resolution.
+In full control, hold folks accountable, in charge of the full company.
+But it's also a grueling job.
+Anger people in position of power.
+Risk of hurting colleagues.
+It's exhausting.
+
+How to improve the situation.
+First Responder: you are in charge until you can hand it off.
+Commander or Ivestigator?
+Depending on your abilities.
+If you are better in solving issues, or better organizing.
+Repletion ships in the org are helpful.
+Shadowing incident commanders.
+If you are a good commander make sure to share you xp.
+
+Practice, talk someone through something, specific, direct language.
+Learn your stack.
+Broad knowledge is helpful, find the right teams/people at the right time. 
+`Keep talking and no one explodes` is a good practice for teams.
+Feedback, is also very important, encourage feedback.
+Make sure you are coachable.
+
+Have game days.
+
+Common challenges.
+No one response to a page?
+Why?
+To many pages, burned out?
+Have a well groomed escalation path.
+Stop declaring incidents.
+If something happens constantly it's might not be an incident.
+
+If someone in power suggest the commander to do something.
+Be polite, have seniors help that have a good relation to that person.
+Ensure that you are the commander and are in charge.
+Ask the person to leave.
+
+Too many threads.
+Swimlanes with objectives and deadlines.
+Separate chats/meeting room.
+Request async chatter.
+Add assistant commanders.
+
+More automation, less manual processes.
+
+There are incident management frameworks lime NIST.
 
 
 ## Break
@@ -276,13 +403,61 @@ Books:
 ## Terraform for Platform Teams
 9:55 am → 30 min, Issac Goldstand; Terraform 
 
+Worked at a large company, and they invested heavily into devops.
+IaC is the basis, for platform engineers.
+Developers base on the platform team.
+Is DevOps dead, now that platform team is on the rise.
+A lot of time was spend teaching developers to become devops.
+In some cases it does not work that each team own their environment.
+E.G. Networking might not be managed like this.
+
+Lets create a rest api for developers to perform infrastructure changes.
+Hides the actual complexity and allows permission checks.
+
+There are a ton of community maintained providers.
+
+... rewatch
+
 
 ## Exploring and Provisioning Infrastructure with Packer
 10:25 am → 30 min, Andrei Buzoianu, Elif Samedin; Packer 
 
+What is packer?
+Build images for VMs or Containers.
+
+What does packer solve?
+Immutable Infrastructure.
+Configuration drift.
+
+TTM (time to market) & S2M (speed to market)
+
+Really bad presentation.
+
+https://github.com/docker/docker-bench-security
+
 
 ## Back to the Future: Service Mesh for Legacy Software
 10:55 am → 30 min, Lev Andelman; Consul 
+
+Why not use service mesh all the time?
+More CPU more memory required.
+Higher latency.
+
+Legacy servers will be mashed with consul server.
+
+checkout `demo-magic`
+
+The concept of intentions in consul are like firewall rules.
+Consule and envoy proxy is used to archive this.
+Traffic it now encrypted (mTLS).
+
+Consul has some build in circuit breaker.
+
+Service Mesh is grate for HTTP services.
+Even with TCP it's create.
+You gain encryption and access control.
+
+Service Mesh can be used without k8s.
 
 
 ## Containerized Infrastructure-as-Code with Immutable Clusters
